@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>作品集</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+  background: #060b14; color: #c8cdd8; line-height: 1.6; min-height: 100vh; overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content:''; position:fixed; inset:0;
+  background-image:linear-gradient(rgba(79,140,247,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,140,247,0.03) 1px,transparent 1px);
+  background-size:60px 60px; pointer-events:none; z-index:0;
+}
+.glow-orb { position:fixed; border-radius:50%; filter:blur(120px); opacity:0.12; pointer-events:none; z-index:0; }
+.glow-orb-1 { width:600px; height:600px; background:#4f8cf7; top:-200px; left:-100px; }
+.glow-orb-2 { width:500px; height:500px; background:#8b5cf6; bottom:-150px; right:-150px; }
+
+.nav { position:sticky; top:0; z-index:100; background:rgba(6,11,20,0.72); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,0.06); }
+.nav-inner { max-width:1280px; margin:0 auto; padding:0 24px; display:flex; align-items:center; justify-content:space-between; height:56px; }
+.nav-logo { font-size:1.1rem; font-weight:700; background:linear-gradient(135deg,#4f8cf7,#8b5cf6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; letter-spacing:0.5px; }
+.nav-links { display:flex; gap:4px; list-style:none; }
+.nav-links a { color:#8a8f9a; text-decoration:none; padding:6px 14px; border-radius:8px; font-size:0.875rem; transition:all 0.25s; }
+.nav-links a:hover,.nav-links a.active { color:#e0e4ec; background:rgba(79,140,247,0.12); }
+:focus-visible { outline:2px solid #4f8cf7; outline-offset:2px; border-radius:4px; }
+.nav-toggle { display:none; align-items:center; justify-content:center; width:40px; height:40px; margin-left:8px; border:1px solid rgba(255,255,255,0.1); border-radius:8px; background:transparent; color:#c8cdd8; cursor:pointer; transition:all 0.25s; }
+.nav-toggle:hover { border-color:rgba(79,140,247,0.4); color:#e0e4ec; }
+
+.hero { position:relative; z-index:1; text-align:center; padding:90px 24px 70px; }
+.hero-badge { display:inline-block; padding:5px 16px; border:1px solid rgba(79,140,247,0.3); border-radius:20px; font-size:0.8rem; color:#4f8cf7; letter-spacing:1px; margin-bottom:24px; }
+.hero h1 { font-size:clamp(2.2rem,5vw,3.4rem); font-weight:800; color:#f0f2f8; letter-spacing:-0.5px; margin-bottom:12px; }
+.hero h1 span { background:linear-gradient(135deg,#4f8cf7 0%,#8b5cf6 50%,#c084fc 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.hero-subtitle { font-size:1.1rem; color:#8a8f9a; max-width:560px; margin:0 auto 32px; line-height:1.7; }
+.hero-tags { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+.hero-tag { padding:6px 18px; border-radius:20px; font-size:0.82rem; color:#a0a8c0; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); transition:all 0.3s; }
+.hero-tag:hover { border-color:rgba(79,140,247,0.4); color:#c8cde0; background:rgba(79,140,247,0.08); }
+
+.filter-bar { position:relative; z-index:1; display:flex; justify-content:center; flex-wrap:wrap; gap:8px; padding:0 24px 36px; }
+.filter-btn { padding:8px 18px; border-radius:24px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); color:#8a8f9a; font-size:0.84rem; cursor:pointer; transition:all 0.3s; font-family:inherit; min-height:44px; white-space:nowrap; }
+.filter-btn:hover { border-color:rgba(79,140,247,0.4); color:#c8cde0; }
+.filter-btn.active { background:linear-gradient(135deg,rgba(79,140,247,0.2),rgba(139,92,246,0.2)); border-color:rgba(79,140,247,0.5); color:#e0e4ec; font-weight:600; }
+
+.portfolio { position:relative; z-index:1; max-width:1320px; margin:0 auto; padding:0 24px 80px; display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:22px; }
+
+.card { background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.06); border-radius:14px; overflow:hidden; cursor:pointer; transition:all 0.4s cubic-bezier(0.25,0.8,0.25,1.2); }
+.card:hover { transform:translateY(-6px); border-color:rgba(79,140,247,0.35); box-shadow:0 12px 40px rgba(79,140,247,0.12),0 4px 12px rgba(0,0,0,0.3); }
+.card-img-wrap { position:relative; overflow:hidden; background:rgba(0,0,0,0.3); aspect-ratio:1/1; }
+.card-img-wrap img { width:100%; height:100%; object-fit:cover; object-position:center top; transition:transform 0.6s cubic-bezier(0.25,0.8,0.25,1); }
+.card:hover .card-img-wrap img { transform:scale(1.06); }
+.card-img-wrap::after { content:''; position:absolute; inset:0; background:linear-gradient(to top,rgba(6,11,20,0.5) 0%,transparent 30%); pointer-events:none; }
+.card-cat-tag { position:absolute; top:12px; right:12px; padding:4px 12px; border-radius:12px; font-size:0.7rem; font-weight:600; letter-spacing:0.5px; z-index:2; backdrop-filter:blur(8px); }
+.card-img-count { position:absolute; bottom:12px; left:12px; padding:3px 10px; border-radius:10px; font-size:0.7rem; color:#c8cdd8; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px); z-index:2; }
+.cat-app { background:rgba(79,140,247,0.25); color:#8bb8ff; }
+.cat-web { background:rgba(139,92,246,0.25); color:#b89fff; }
+.cat-system { background:rgba(6,182,212,0.2); color:#67e8f9; }
+.cat-ecom { background:rgba(34,197,94,0.2); color:#6ee7a8; }
+.cat-brand { background:rgba(249,115,22,0.2); color:#fda85c; }
+.cat-morong { background:rgba(99,102,241,0.28); color:#a5b4fc; }
+.card-body { padding:20px; }
+.card-title { font-size:1.02rem; font-weight:700; color:#e8ecf4; margin-bottom:6px; }
+.card-role { font-size:0.78rem; color:#6b7180; margin-bottom:10px; }
+.card-desc { font-size:0.82rem; color:#8a8f9a; line-height:1.5; margin-bottom:14px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.card-tools { display:flex; flex-wrap:wrap; gap:6px; }
+.card-tool { padding:3px 10px; border-radius:6px; font-size:0.7rem; background:rgba(79,140,247,0.08); color:#7b94d0; border:1px solid rgba(79,140,247,0.12); }
+.card-expand { display:inline-flex; align-items:center; gap:4px; margin-top:12px; font-size:0.78rem; color:#4f8cf7; font-weight:600; transition:gap 0.3s; }
+.card:hover .card-expand { gap:8px; }
+.card-expand svg { width:14px; height:14px; }
+.empty-state { grid-column:1/-1; text-align:center; padding:60px 20px; color:#5a6070; }
+
+/* Lightbox (non-ecom only) */
+.lightbox { position:fixed; inset:0; z-index:1000; background:rgba(3,5,12,0.95); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; transition:all 0.35s; }
+.lightbox.open { opacity:1; visibility:visible; }
+.lb-container { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:14px; max-width:92vw; max-height:92vh; }
+.lb-main { position:relative; display:flex; align-items:center; justify-content:center; }
+.lb-main img { max-width:85vw; max-height:55vh; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.5); object-fit:contain; }
+.lb-counter { position:absolute; top:-34px; left:50%; transform:translateX(-50%); font-size:0.8rem; color:#8a8f9a; font-weight:600; letter-spacing:1px; background:rgba(0,0,0,0.4); padding:4px 14px; border-radius:12px; white-space:nowrap; }
+.lb-close { position:absolute; top:16px; right:20px; width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:#c8cdd8; font-size:1.3rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.25s; z-index:10; }
+.lb-close:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.3); }
+.lb-nav { position:absolute; top:50%; transform:translateY(-50%); z-index:5; width:48px; height:48px; border-radius:50%; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.04); color:#c8cdd8; font-size:1.3rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.25s; }
+.lb-nav:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.3); }
+.lb-prev { left:-56px; } .lb-next { right:-56px; }
+.lb-info { text-align:center; max-width:500px; }
+.lb-info h3 { font-size:1.1rem; color:#e8ecf4; margin-bottom:4px; }
+.lb-info .lb-role { font-size:0.78rem; color:#6b7180; }
+.lb-thumbs { display:flex; gap:8px; overflow-x:auto; max-width:85vw; padding:4px 0; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.1) transparent; }
+.lb-thumbs::-webkit-scrollbar { height:4px; }
+.lb-thumbs::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:4px; }
+.lb-thumb { flex-shrink:0; width:68px; height:68px; border-radius:8px; overflow:hidden; cursor:pointer; border:2px solid transparent; transition:all 0.25s; opacity:0.5; background:rgba(0,0,0,0.3); }
+.lb-thumb:hover { opacity:0.8; border-color:rgba(255,255,255,0.25); }
+.lb-thumb.active { opacity:1; border-color:#4f8cf7; }
+.lb-thumb img { width:100%; height:100%; object-fit:cover; }
+
+.footer { position:relative; z-index:1; text-align:center; padding:40px 24px; border-top:1px solid rgba(255,255,255,0.05); }
+.footer p { font-size:0.8rem; color:#4a5060; }
+
+/* Product page (Amazon-style) */
+.product-page { display:none; position:relative; z-index:2; min-height:calc(100vh - 56px); }
+.product-page.open { display:block; }
+.pp-inner { max-width:1180px; margin:0 auto; padding:28px 24px 80px; }
+.pp-back { display:inline-flex; align-items:center; gap:6px; margin-bottom:18px; padding:8px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); color:#8a8f9a; font-size:0.84rem; cursor:pointer; transition:all 0.25s; }
+.pp-back:hover { border-color:rgba(79,140,247,0.4); color:#e0e4ec; background:rgba(79,140,247,0.08); }
+.pp-layout { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr); gap:36px; align-items:start; }
+.pp-gallery { display:grid; grid-template-columns:72px 1fr; gap:14px; position:sticky; top:80px; }
+.pp-thumbs { display:flex; flex-direction:column; gap:10px; }
+.pp-thumb { width:68px; height:68px; border-radius:10px; overflow:hidden; border:2px solid transparent; background:rgba(0,0,0,0.3); cursor:pointer; transition:all 0.2s; }
+.pp-thumb:hover { border-color:rgba(79,140,247,0.5); }
+.pp-thumb.active { border-color:#4f8cf7; }
+.pp-thumb img { width:100%; height:100%; object-fit:cover; }
+.pp-main { aspect-ratio:1/1; background:#fff; border-radius:14px; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+.pp-main img { width:100%; height:100%; object-fit:contain; }
+.pp-info { display:flex; flex-direction:column; gap:20px; }
+.pp-title { font-size:clamp(1.5rem,3vw,2rem); font-weight:800; color:#f0f2f8; line-height:1.25; }
+.pp-meta { font-size:0.8rem; color:#6b7180; }
+.pp-intro { font-size:0.92rem; color:#a8aec0; line-height:1.85; }
+.pp-colors-label { font-size:0.75rem; color:#8a8f9a; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; }
+.pp-colors { display:flex; flex-wrap:wrap; gap:10px; }
+.pp-color { display:flex; flex-direction:column; align-items:center; gap:5px; padding:6px; border-radius:10px; border:2px solid transparent; background:rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s; min-width:64px; }
+.pp-color:hover { border-color:rgba(79,140,247,0.4); }
+.pp-color.active { border-color:#4f8cf7; background:rgba(79,140,247,0.08); }
+.pp-color img { width:48px; height:48px; object-fit:cover; border-radius:6px; }
+.pp-color span { font-size:0.72rem; color:#9aa0b0; }
+.pp-color.active span { color:#c8cdd8; }
+.pp-aplus { margin-top:28px; }
+.pp-aplus h4 { font-size:0.75rem; color:#8a8f9a; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; }
+.pp-aplus-grid { display:grid; grid-template-columns:1fr; gap:16px; }
+.pp-aplus img { width:100%; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.4); }
+.pp-empty { color:#5a6070; font-size:0.85rem; }
+.pp-main-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+.pp-main-grid img { width:100%; aspect-ratio:1/1; object-fit:contain; background:#fff; border-radius:14px; padding:8px; }
+
+/* 无 A+ 产品：居中排版，简介居中，按颜色/形状分组，每组 4-5 张一排 */
+.pp-flat { max-width:1120px; margin:0 auto; padding:12px 16px 64px; text-align:center; }
+.pp-flat-head { text-align:center; margin-bottom:6px; }
+.pp-intro-center { max-width:760px; margin:16px auto 30px; }
+.pp-intro-center p { text-align:center; }
+.pp-group-label { margin:32px 0 14px; font-size:1.15rem; font-weight:600; color:#eef1f7; letter-spacing:.5px; }
+.pp-group-label::before, .pp-group-label::after { content:""; display:inline-block; width:30px; height:1px; background:rgba(255,255,255,.18); vertical-align:middle; margin:0 12px; }
+.pp-flat-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; }
+.pp-flat-grid img { width:200px; max-width:30vw; aspect-ratio:1/1; object-fit:contain; background:#fff; border-radius:12px; padding:6px; box-shadow:0 4px 16px rgba(0,0,0,.35); transition:transform .18s ease; }
+.pp-flat-grid img:hover { transform:translateY(-4px); }
+
+@media (max-width:1024px) {
+  .portfolio { grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); }
+  .lb-prev { left:-40px; } .lb-next { right:-40px; }
+  .pp-layout { grid-template-columns:1fr; gap:28px; }
+  .pp-gallery { position:static; grid-template-columns:1fr; }
+  .pp-thumbs { flex-direction:row; order:2; overflow-x:auto; padding-bottom:4px; }
+}
+@media (max-width:768px) {
+  .nav-toggle { display:flex; }
+  .nav-links { display:none; position:absolute; top:56px; right:16px; flex-direction:column; gap:2px; background:rgba(6,11,20,0.96); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:8px; min-width:140px; box-shadow:0 12px 36px rgba(0,0,0,0.5); }
+  .nav-links.open { display:flex; }
+  .nav-links a { display:block; text-align:center; }
+  .hero { padding:56px 20px 44px; }
+  .hero h1 { font-size:clamp(1.7rem,6vw,2.2rem); }
+  .hero-subtitle { font-size:0.92rem; }
+  .portfolio { grid-template-columns:1fr; gap:18px; padding:0 16px 56px; }
+  .filter-bar { padding:0 12px 28px; gap:6px; }
+  .filter-btn { padding:7px 14px; font-size:0.78rem; }
+  .lb-main img { max-width:92vw; max-height:45vh; }
+  .lb-nav { width:40px; height:40px; }
+  .lb-prev { left:4px; } .lb-next { right:4px; }
+  .lb-thumb { width:52px; height:52px; }
+  .lb-thumbs { max-width:92vw; }
+  .pp-inner { padding:16px 16px 56px; }
+  .pp-gallery { gap:10px; }
+  .pp-main { aspect-ratio:1/1; }
+  .pp-main-grid { grid-template-columns:1fr; }
+  .pp-flat-grid img { width:44vw; max-width:none; }
+}
+@media (prefers-reduced-motion:reduce){ *{ animation-duration:.01ms!important; transition-duration:.01ms!important; scroll-behavior:auto!important; } }
+</style>
+</head>
+<body>
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<nav class="nav"><div class="nav-inner"><div class="nav-logo">PORTFOLIO</div><ul class="nav-links" id="navLinks"><li><a href="#hero" class="active">首页</a></li><li><a href="#works">作品</a></li></ul><button class="nav-toggle" id="navToggle" aria-label="打开菜单" aria-expanded="false" aria-controls="navLinks"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button></div></nav>
+
+<section class="hero" id="hero">
+  <div class="hero-badge">PORTFOLIO 2026</div>
+  <h1>作品<span>集</span></h1>
+  <p class="hero-subtitle">专注品牌视觉与产品设计的创意实践者<br>覆盖APP · 网页 · 后台 · 电商 · 摩融 · 品牌VI · 宣传物料 全链路设计</p>
+  <div class="hero-tags">
+    <span class="hero-tag">UI/UX 设计</span><span class="hero-tag">电商视觉</span><span class="hero-tag">品牌VI</span><span class="hero-tag">网页设计</span><span class="hero-tag">后台系统</span><span class="hero-tag">摩融系统</span><span class="hero-tag">产品设计</span>
+  </div>
+</section>
+
+<div class="filter-bar" id="filterBar">
+  <button class="filter-btn active" data-filter="all">全部</button>
+  <button class="filter-btn" data-filter="morong">摩融系统</button>
+  <button class="filter-btn" data-filter="app">APP设计</button>
+  <button class="filter-btn" data-filter="web">网页设计</button>
+  <button class="filter-btn" data-filter="system">后台系统</button>
+  <button class="filter-btn" data-filter="ecom">电商设计</button>
+  <button class="filter-btn" data-filter="brand">品牌&物料</button>
+</div>
+
+<section class="portfolio" id="works"></section>
+<div class="empty-state" id="emptyState" style="display:none"><p>该分类暂无作品</p></div>
+
+<section class="product-page" id="productPage" aria-live="polite">
+  <div class="pp-inner" id="productInner"></div>
+</section>
+
+<footer class="footer" id="footer"><p>&copy; 2026 Portfolio. All rights reserved.</p></footer>
+
+<div class="lightbox" id="lightbox" tabindex="-1">
+  <button class="lb-close" id="lbClose" aria-label="关闭"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <div class="lb-container" id="lbContainer"></div>
+  <button class="lb-nav lb-prev" id="lbPrev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+  <button class="lb-nav lb-next" id="lbNext"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+</div>
+
+<script src="ecom_products.js"></script>
+<script>
+const projects = [
+  // 非电商作品（APP / 网页 / 后台 / 摩融 / 品牌物料）
+    {
+    "id": 1,
+    "img": "images/01-boundary-food.jpg",
+    "name": "BOUNDARY 美食APP",
+    "category": "app",
+    "catName": "APP设计",
+    "role": "独立设计",
+    "tools": [
+      "Sketch",
+      "Principle"
+    ],
+    "desc": "高端美食电商APP，首页发现、精选导购、购物车结算全链路设计",
+    "details": [
+      "images/1/detail-01.jpg",
+      "images/1/detail-02.jpg",
+      "images/1/detail-03.jpg",
+      "images/1/detail-04.jpg",
+      "images/1/detail-05.jpg",
+      "images/1/detail-06.jpg",
+      "images/1/detail-07.jpg",
+      "images/1/detail-08.jpg"
+    ]
+  },
+  {
+    "id": 2,
+    "img": "images/02-starpad.jpg",
+    "name": "Star Pad 医院星级认证",
+    "category": "app",
+    "catName": "APP设计",
+    "role": "独立设计",
+    "tools": [
+      "Axure RP",
+      "Sketch"
+    ],
+    "desc": "医院星级评审移动端平台，专家评审、信息管理、历次对比",
+    "details": [
+      "images/2/detail-01.jpg",
+      "images/2/detail-02.jpg",
+      "images/2/detail-03.jpg",
+      "images/2/detail-04.jpg",
+      "images/2/detail-05.jpg",
+      "images/2/detail-06.jpg",
+      "images/2/detail-07.jpg",
+      "images/2/detail-08.jpg"
+    ]
+  },
+  {
+    "id": 3,
+    "img": "images/03-omega.jpg",
+    "name": "OMEGA 腕表品牌站",
+    "category": "web",
+    "catName": "网页设计",
+    "role": "独立设计",
+    "tools": [
+      "HTML/CSS"
+    ],
+    "desc": "奢侈腕表品牌官网视觉设计，大图叙事 + 产品故事线排版",
+    "details": [
+      "images/3/detail-01.jpg",
+      "images/3/detail-02.jpg",
+      "images/3/detail-03.jpg",
+      "images/3/detail-04.jpg",
+      "images/3/detail-05.jpg",
+      "images/3/detail-06.jpg",
+      "images/3/detail-07.jpg",
+      "images/3/detail-08.jpg"
+    ]
+  },
+  {
+    "id": 4,
+    "img": "images/04-morong.jpg",
+    "name": "摩融科技 · 官网",
+    "category": "morong",
+    "catName": "摩融系统",
+    "role": "独立设计",
+    "tools": [
+      "Axure"
+    ],
+    "desc": "金融科技企业官网，产品平台、解决方案、发展历程",
+    "details": [
+      "images/4/detail-01.jpg",
+      "images/4/detail-02.jpg",
+      "images/4/detail-03.jpg",
+      "images/4/detail-04.jpg"
+    ]
+  },
+  {
+    "id": 41,
+    "img": "images/morong-app-cover.jpg",
+    "name": "摩融科技 · APP",
+    "category": "morong",
+    "catName": "摩融系统",
+    "role": "独立设计",
+    "tools": [
+      "Sketch"
+    ],
+    "desc": "摩智行车辆追踪 APP，实时定位、电池监控、告警管理",
+    "details": [
+      "images/morong-app/detail-01.jpg",
+      "images/morong-app/detail-02.jpg",
+      "images/morong-app/detail-03.jpg",
+      "images/morong-app/detail-04.jpg",
+      "images/morong-app/detail-05.jpg",
+      "images/morong-app/detail-06.jpg",
+      "images/morong-app/detail-07.jpg",
+      "images/morong-app/detail-08.jpg",
+      "images/morong-app/detail-09.jpg",
+      "images/morong-app/detail-10.jpg"
+    ]
+  },
+  {
+    "id": 42,
+    "img": "images/morong-sys-cover.jpg",
+    "name": "摩融科技 · 管理系统",
+    "category": "morong",
+    "catName": "摩融系统",
+    "role": "独立设计",
+    "tools": [
+      "Axure"
+    ],
+    "desc": "摩智行后台管理系统，数据报表、设备续费、运营管控",
+    "details": [
+      "images/morong-sys/detail-01.jpg",
+      "images/morong-sys/detail-02.jpg",
+      "images/morong-sys/detail-03.jpg"
+    ]
+  },
+  {
+    "id": 5,
+    "img": "images/05-building.jpg",
+    "name": "智慧楼宇数字化大屏",
+    "category": "system",
+    "catName": "后台系统",
+    "role": "独立设计",
+    "tools": [
+      "DataV"
+    ],
+    "desc": "楼宇运营数字化大屏，运维/能源/运营三大数据可视化驾驶舱",
+    "details": [
+      "images/5/detail-01.jpg",
+      "images/5/detail-02.jpg",
+      "images/5/detail-03.jpg"
+    ]
+  },
+  {
+    "id": 6,
+    "img": "images/06-snowbeer.jpg",
+    "name": "雪花啤酒品牌站",
+    "category": "web",
+    "catName": "网页设计",
+    "role": "独立设计",
+    "tools": [],
+    "desc": "啤酒品牌官网，系列产品展示 + 详情页，强化品牌调性",
+    "details": [
+      "images/6/detail-01.jpg",
+      "images/6/detail-02.jpg"
+    ]
+  },
+  {
+    "id": 7,
+    "img": "images/07-lexus.jpg",
+    "name": "雷克萨斯品牌站",
+    "category": "web",
+    "catName": "网页设计",
+    "role": "独立设计",
+    "tools": [],
+    "desc": "豪华汽车品牌官网，沉稳大气的高端质感呈现",
+    "details": [
+      "images/7/detail-01.jpg"
+    ]
+  },
+  {
+    "id": 8,
+    "img": "images/08-langke.jpg",
+    "name": "浪客手表品牌站",
+    "category": "web",
+    "catName": "网页设计",
+    "role": "独立设计",
+    "tools": [
+      "Illustrator"
+    ],
+    "desc": "年轻潮流腕表品牌官网，潮酷视觉 + 精工细节",
+    "details": [
+      "images/8/detail-01.jpg"
+    ]
+  },
+  {
+    "id": 9,
+    "img": "images/09-linglu.jpg",
+    "name": "领路达方企业站",
+    "category": "web",
+    "catName": "网页设计",
+    "role": "独立设计",
+    "tools": [],
+    "desc": "科技企业官方形象站，简约商务风格设计",
+    "details": [
+      "images/9/detail-01.jpg",
+      "images/9/detail-02.jpg",
+      "images/9/detail-03.jpg",
+      "images/9/detail-04.jpg"
+    ]
+  },
+  {
+    "id": 20,
+    "img": "images/20-xinhui.jpg",
+    "name": "薪惠系统",
+    "category": "system",
+    "catName": "后台系统",
+    "role": "独立设计",
+    "tools": [
+      "Axure RP",
+      "Sketch"
+    ],
+    "desc": "B2B SaaS薪酬管理系统，企业权限、合同管理、批量转账、订单明细等模块",
+    "details": [
+      "images/20/detail-01.jpg",
+      "images/20/detail-02.jpg",
+      "images/20/detail-03.jpg",
+      "images/20/detail-04.jpg",
+      "images/20/detail-05.jpg",
+      "images/20/detail-06.jpg",
+      "images/20/detail-07.jpg",
+      "images/20/detail-08.jpg"
+    ]
+  },
+  {
+    "id": 21,
+    "img": "images/21-icu.jpg",
+    "name": "重症监护系统",
+    "category": "system",
+    "catName": "后台系统",
+    "role": "独立设计",
+    "tools": [
+      "Sketch"
+    ],
+    "desc": "医院ICU重症监护管理系统，病人监控、用药执行、护理评估全流程",
+    "details": [
+      "images/21/detail-01.jpg",
+      "images/21/detail-02.jpg",
+      "images/21/detail-03.jpg",
+      "images/21/detail-04.jpg",
+      "images/21/detail-05.jpg",
+      "images/21/detail-06.jpg",
+      "images/21/detail-07.jpg",
+      "images/21/detail-08.jpg"
+    ]
+  },
+  {
+    "id": 22,
+    "img": "images/22/img_01.jpg",
+    "name": "宣传册 & 折页",
+    "category": "brand",
+    "catName": "品牌&物料",
+    "role": "独立设计",
+    "tools": [
+      "Illustrator"
+    ],
+    "desc": "海祺科技A3宣传册、深医手术麻醉画册、定南产业园三折页、摩融展板",
+    "details": [
+      "images/22/img_01.jpg",
+      "images/22/img_02.jpg",
+      "images/22/img_03.jpg",
+      "images/22/img_04.jpg",
+      "images/22/img_05.jpg",
+      "images/22/img_06.jpg",
+      "images/22/img_07.png",
+      "images/22/img_08.png",
+      "images/22/img_09.png",
+      "images/22/img_10.png",
+      "images/22/img_11.png",
+      "images/22/img_12.png",
+      "images/22/img_13.jpg",
+      "images/22/img_14.png",
+      "images/22/img_15.png",
+      "images/22/img_16.png",
+      "images/22/img_17.jpg",
+      "images/22/img_18.jpg",
+      "images/22/img_19.jpg",
+      "images/22/img_20.jpg",
+      "images/22/img_21.jpg",
+      "images/22/img_22.jpg",
+      "images/22/img_23.png",
+      "images/22/img_24.png",
+      "images/22/img_25.png",
+      "images/22/img_26.jpg",
+      "images/22/img_27.jpg"
+    ]
+  },
+  {
+    "id": 23,
+    "img": "images/23/img_01.jpg",
+    "name": "展板 & 海报",
+    "category": "brand",
+    "catName": "品牌&物料",
+    "role": "独立设计",
+    "tools": [
+      "Illustrator"
+    ],
+    "desc": "地产海报、游戏界面、环球3M展板设计",
+    "details": [
+      "images/23/img_01.jpg",
+      "images/23/img_02.jpg",
+      "images/23/img_03.jpg",
+      "images/23/img_04.jpg",
+      "images/23/img_05.jpg",
+      "images/23/img_06.jpg",
+      "images/23/img_07.jpg",
+      "images/23/img_08.jpg",
+      "images/23/img_09.jpg",
+      "images/23/img_10.jpg",
+      "images/23/img_11.jpg",
+      "images/23/img_12.jpg"
+    ]
+  },
+  // 电商作品由 ecom_products.js 提供（扫描 新建文件夹/电商 真实目录生成）
+  ...(window.ECOM_PRODUCTS || [])
+];
+const catClassMap = { app:'cat-app', web:'cat-web', system:'cat-system', ecom:'cat-ecom', brand:'cat-brand', morong:'cat-morong' };
+const grid = document.getElementById('works');
+const emptyState = document.getElementById('emptyState');
+const hero = document.getElementById('hero');
+const filterBar = document.getElementById('filterBar');
+const footer = document.getElementById('footer');
+const productPage = document.getElementById('productPage');
+const productInner = document.getElementById('productInner');
+
+function getTotalImages(p) {
+  if (p.images) return p.images.length;
+  if (p.groups) return p.groups.reduce((s,g)=>s+(g.images||[]).length, 0);
+  if (p.colors) {
+    const mainCount = p.colors.reduce((s,c)=>s+(c.main||[]).length,0);
+    const aplusCount = p.colors.reduce((s,c)=>s+(c.aplus||[]).length,0);
+    return mainCount + aplusCount;
+  }
+  return 1 + (p.details ? p.details.length : 0);
+}
+
+function renderCards(filter) {
+  const filtered = filter==='all' ? projects : projects.filter(p=>p.category===filter);
+  grid.innerHTML = '';
+  if (filtered.length===0) { emptyState.style.display='block'; return; }
+  emptyState.style.display = 'none';
+  filtered.forEach(p => {
+    const total = getTotalImages(p);
+    const card = document.createElement('figure');
+    card.className = 'card';
+    card.innerHTML = `<div class="card-img-wrap"><img src="${p.cover || p.img}" alt="${p.name}" loading="lazy"><span class="card-cat-tag ${catClassMap[p.category]||''}">${p.catName}</span><span class="card-img-count">${total} 张</span></div><figcaption class="card-body"><div class="card-title">${p.name}</div><div class="card-role">${p.role}</div><div class="card-desc">${p.desc}</div><div class="card-tools">${p.tools.map(t=>`<span class="card-tool">${t}</span>`).join('')}</div><div class="card-expand">查看全部 ${total} 张<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="5" x2="12" y2="19"/></svg></div></figcaption>`;
+    card.addEventListener('click', () => {
+      if (p.category==='ecom') {
+        location.hash = `#/product/${p.id}`;
+      } else {
+        lastTrigger = card;
+        openLightbox(p);
+      }
+    });
+    grid.appendChild(card);
+  });
+}
+
+// ===== Product page =====
+let currentProduct = null;
+let activeColorIdx = 0;
+let activeMainIdx = 0;
+
+function openProductPage(id) {
+  const p = projects.find(x=>x.id===id);
+  if (!p) return;
+  currentProduct = p;
+  activeColorIdx = 0;
+  activeMainIdx = 0;
+  renderProductPage();
+  hero.style.display='none';
+  filterBar.style.display='none';
+  grid.style.display='none';
+  footer.style.display='none';
+  emptyState.style.display='none';
+  productPage.classList.add('open');
+  window.scrollTo(0,0);
+}
+
+function closeProductPage() {
+  location.hash = '';
+}
+
+function renderProductPage() {
+  const p = currentProduct;
+  const hasAplus = p.colors && p.colors.some(c => c.aplus && c.aplus.length);
+
+  // 无 A+：居中排版，简介居中，按颜色/形状分组，每组 4-5 张一排
+  if (!hasAplus) {
+    const groups = p.groups || [{name:'', images: p.images || (p.colors||[]).reduce((arr,c)=>arr.concat(c.main||[]), [])}];
+    const groupsHtml = groups.map(g=>{
+      const label = g.name ? `<div class="pp-group-label">${g.name}</div>` : '';
+      const imgs = g.images.map((im,i)=>`<img src="${im}" alt="${p.name}${g.name?(' '+g.name):''} 第${i+1}张" loading="lazy">`).join('');
+      return `${label}<div class="pp-flat-grid">${imgs}</div>`;
+    }).join('');
+    productInner.innerHTML = `
+      <button class="pp-back" id="ppBack" aria-label="返回作品集">← 返回作品集</button>
+      <div class="pp-flat">
+        <div class="pp-flat-head">
+          <h1 class="pp-title">${p.name}</h1>
+          <div class="pp-meta">${p.catName} · ${p.role||'独立设计'}</div>
+        </div>
+        <div class="pp-intro pp-intro-center"><p>${p.intro||''}</p></div>
+        <div class="pp-flat-body">${groupsHtml}</div>
+      </div>`;
+    const backBtn = document.getElementById('ppBack');
+    if (backBtn) backBtn.addEventListener('click', closeProductPage);
+    return;
+  }
+
+  // 有 A+：亚马逊式，颜色切换 + A+ 配对
+  const colors = p.colors || [];
+  const activeColor = colors[activeColorIdx] || colors[0] || {name:'',main:[],aplus:[]};
+  const mainImgs = activeColor.main || [];
+  const mainImg = mainImgs[activeMainIdx] || mainImgs[0] || p.img;
+
+  const thumbsHtml = mainImgs.map((img,i)=>`
+    <button class="pp-thumb${i===activeMainIdx?' active':''}" data-idx="${i}" aria-label="查看第${i+1}张主图">
+      <img src="${img}" alt="">
+    </button>`).join('');
+
+  const colorsHtml = colors.map((c,i)=>`
+    <button class="pp-color${i===activeColorIdx?' active':''}" data-idx="${i}" aria-label="切换到 ${c.name}">
+      <img src="${c.main[0]||p.img}" alt="${c.name}">
+      <span>${c.name}</span>
+    </button>`).join('');
+
+  const aplusHtml = (activeColor.aplus && activeColor.aplus.length) ? `
+    <div class="pp-aplus">
+      <h4>A+ 内容</h4>
+      <div class="pp-aplus-grid">${activeColor.aplus.map(im=>`<img src="${im}" alt="" loading="lazy">`).join('')}</div>
+    </div>` : '';
+
+  productInner.innerHTML = `
+    <button class="pp-back" id="ppBack" aria-label="返回作品集">← 返回作品集</button>
+    <div class="pp-layout">
+      <div class="pp-gallery">
+        <div class="pp-thumbs" id="ppThumbs">${thumbsHtml}</div>
+        <div class="pp-main"><img id="ppMain" src="${mainImg}" alt="${p.name}"></div>
+      </div>
+      <div class="pp-info">
+        <div>
+          <h1 class="pp-title">${p.name}</h1>
+          <div class="pp-meta">${p.catName} · ${p.role||'独立设计'}</div>
+        </div>
+        <div class="pp-intro"><p>${p.intro||''}</p></div>
+        ${colors.length>1?`<div><div class="pp-colors-label">选择颜色 / 款式</div><div class="pp-colors" id="ppColors">${colorsHtml}</div></div>`:`<div class="pp-colors-label">${colors[0]?colors[0].name:'默认款'}</div>`}
+        ${aplusHtml}
+      </div>
+    </div>`;
+
+  const backBtn = document.getElementById('ppBack');
+  if (backBtn) backBtn.addEventListener('click', closeProductPage);
+
+  const thumbs = document.getElementById('ppThumbs');
+  if (thumbs) thumbs.querySelectorAll('.pp-thumb').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      activeMainIdx = parseInt(btn.dataset.idx);
+      renderProductPage();
+    });
+  });
+
+  const colorBtns = document.getElementById('ppColors');
+  if (colorBtns) colorBtns.querySelectorAll('.pp-color').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      activeColorIdx = parseInt(btn.dataset.idx);
+      activeMainIdx = 0;
+      renderProductPage();
+    });
+  });
+}
+
+function handleRoute() {
+  const m = location.hash.match(/^#\/product\/(\d+)$/);
+  if (m) {
+    openProductPage(parseInt(m[1]));
+  } else {
+    productPage.classList.remove('open');
+    productInner.innerHTML = '';
+    hero.style.display='';
+    filterBar.style.display='';
+    grid.style.display='';
+    footer.style.display='';
+    const activeBtn = document.querySelector('.filter-btn.active');
+    if (activeBtn) renderCards(activeBtn.dataset.filter);
+    window.scrollTo(0,0);
+  }
+}
+
+// ===== Lightbox (non-ecom) =====
+const lightbox = document.getElementById('lightbox');
+const lbContainer = document.getElementById('lbContainer');
+const lbClose = document.getElementById('lbClose');
+const lbPrev = document.getElementById('lbPrev');
+const lbNext = document.getElementById('lbNext');
+let currentLbProject = null, currentImgIdx = 0, flatImages = [], lastTrigger = null;
+
+function openLightbox(project) {
+  currentLbProject = project;
+  flatImages = [project.img, ...(project.details||[])];
+  currentImgIdx = 0;
+  renderLightbox();
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  lightbox.setAttribute('tabindex','-1');
+  lightbox.focus();
+  updateNavVisibility();
+}
+
+function renderLightbox() {
+  const p = currentLbProject;
+  const total = flatImages.length;
+  const curImg = flatImages[currentImgIdx];
+  lbContainer.innerHTML = `
+    <div class="lb-main">
+      <span class="lb-counter">${currentImgIdx+1} / ${total}</span>
+      <img src="${curImg}" alt="${p.name}">
+    </div>
+    <div class="lb-info"><h3>${p.name}</h3><div class="lb-role">${p.role} · ${p.tools.join(' / ')}</div></div>
+    <div class="lb-thumbs">${flatImages.map((img,i)=>`<div class="lb-thumb${i===currentImgIdx?' active':''}" data-idx="${i}"><img src="${img}" alt="" loading="lazy"></div>`).join('')}</div>
+  `;
+  lbContainer.querySelectorAll('.lb-thumb').forEach(thumb => {
+    thumb.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentImgIdx = parseInt(thumb.dataset.idx);
+      renderLightbox();
+      updateNavVisibility();
+    });
+  });
+  const activeThumb = lbContainer.querySelector('.lb-thumb.active');
+  if (activeThumb) activeThumb.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+}
+
+function updateNavVisibility() {
+  lbPrev.style.display = flatImages.length>1?'flex':'none';
+  lbNext.style.display = flatImages.length>1?'flex':'none';
+}
+
+function prevImg() { if (flatImages.length>1) { currentImgIdx=(currentImgIdx-1+flatImages.length)%flatImages.length; renderLightbox(); } }
+function nextImg() { if (flatImages.length>1) { currentImgIdx=(currentImgIdx+1)%flatImages.length; renderLightbox(); } }
+
+lbClose.addEventListener('click', closeLightbox);
+lbPrev.addEventListener('click', (e) => { e.stopPropagation(); prevImg(); });
+lbNext.addEventListener('click', (e) => { e.stopPropagation(); nextImg(); });
+lightbox.addEventListener('click', (e) => { if (e.target===lightbox) closeLightbox(); });
+function closeLightbox() { lightbox.classList.remove('open'); document.body.style.overflow=''; currentLbProject=null; flatImages=[]; if(lastTrigger){ lastTrigger.focus(); lastTrigger=null; } }
+
+document.addEventListener('keydown', (e) => {
+  if (!lightbox.classList.contains('open')) return;
+  if (e.key==='Escape') closeLightbox();
+  if (e.key==='ArrowLeft') prevImg();
+  if (e.key==='ArrowRight') nextImg();
+});
+
+// ===== Filter / nav =====
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCards(btn.dataset.filter);
+  });
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const t = document.querySelector(link.getAttribute('href'));
+    if(t) t.scrollIntoView({behavior:'smooth'});
+    document.querySelectorAll('.nav-links a').forEach(l=>l.classList.remove('active'));
+    link.classList.add('active');
+  });
+});
+
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+navToggle.addEventListener('click', () => {
+  const open = navLinks.classList.toggle('open');
+  navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  navToggle.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+});
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  navLinks.classList.remove('open');
+  navToggle.setAttribute('aria-expanded','false');
+  navToggle.setAttribute('aria-label','打开菜单');
+}));
+
+window.addEventListener('hashchange', handleRoute);
+renderCards('all');
+handleRoute();
+</script>
+</body>
+</html>
